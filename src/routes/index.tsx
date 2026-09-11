@@ -59,6 +59,17 @@ const complaints: Complaint[] = [
   { id: "C-20414", customer: "Nandi Dlamini", initials: "ND", title: "Mortgage payment marked as late", body: "My mortgage debit went through on the due date, but it has been marked late and a fee was added. Please correct the record before it affects my credit profile.", category: "Mortgage", issue: "Incorrect late fee", sentiment: "Negative", confidence: 93, priority: "High", time: "2h" },
 ];
 
+const firstComplaint: Complaint = complaints[0] ?? {
+  id: "C-00000", customer: "Unknown", initials: "—", title: "Complaint unavailable", body: "No complaint was selected.", category: "Unclassified", issue: "Unavailable", sentiment: "Neutral", confidence: 0, priority: "Low", time: "now",
+};
+
+const metrics = [
+  { label: "Open complaints", value: "342", note: "+12.4%", icon: TrendingUp, tone: "negative" },
+  { label: "Avg. response time", value: "2.4h", note: "31% faster", icon: TrendingDown, tone: "positive" },
+  { label: "Negative sentiment", value: "24%", note: "+2.1 pts", icon: TrendingUp, tone: "negative" },
+  { label: "Auto-classified", value: "98.7%", note: "1,284 today", icon: Zap, tone: "primary" },
+];
+
 const navItems = [
   { label: "Overview", icon: LayoutDashboard },
   { label: "Complaints", icon: Inbox, count: "342" },
@@ -71,11 +82,11 @@ function SentimentPill({ sentiment }: { sentiment: Sentiment }) {
 }
 
 function SupportSense() {
-  const [selectedId, setSelectedId] = useState(complaints[0].id);
+  const [selectedId, setSelectedId] = useState(firstComplaint.id);
   const [filter, setFilter] = useState<"All" | Sentiment>("All");
   const [query, setQuery] = useState("");
   const [insightApplied, setInsightApplied] = useState(false);
-  const selected = complaints.find((item) => item.id === selectedId) ?? complaints[0];
+  const selected = complaints.find((item) => item.id === selectedId) ?? firstComplaint;
   const visible = useMemo(() => complaints.filter((item) => (filter === "All" || item.sentiment === filter) && `${item.customer} ${item.title} ${item.category}`.toLowerCase().includes(query.toLowerCase())), [filter, query]);
 
   return (
@@ -110,12 +121,7 @@ function SupportSense() {
 
         <div className="space-y-5 p-4 sm:p-6">
           <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            {[
-              ["Open complaints", "342", "+12.4%", TrendingUp, "negative"],
-              ["Avg. response time", "2.4h", "31% faster", TrendingDown, "positive"],
-              ["Negative sentiment", "24%", "+2.1 pts", TrendingUp, "negative"],
-              ["Auto-classified", "98.7%", "1,284 today", Zap, "primary"],
-            ].map(([label, value, note, Icon, tone]) => <div key={String(label)} className="rounded-2xl border border-glass-border bg-glass p-5 shadow-glass backdrop-blur-xl"><div className="flex items-center justify-between"><p className="text-xs font-medium text-muted-foreground">{label as string}</p><Icon className={cn("size-4", tone === "negative" && "text-negative", tone === "positive" && "text-positive", tone === "primary" && "text-primary")} /></div><p className="mt-3 font-display text-3xl font-bold">{value as string}</p><p className={cn("mt-1 text-[11px] font-medium", tone === "negative" && "text-negative", tone === "positive" && "text-positive", tone === "primary" && "text-primary")}>{note as string}</p></div>)}
+            {metrics.map(({ label, value, note, icon: Icon, tone }) => <div key={label} className="rounded-2xl border border-glass-border bg-glass p-5 shadow-glass backdrop-blur-xl"><div className="flex items-center justify-between"><p className="text-xs font-medium text-muted-foreground">{label}</p><Icon className={cn("size-4", tone === "negative" && "text-negative", tone === "positive" && "text-positive", tone === "primary" && "text-primary")} /></div><p className="mt-3 font-display text-3xl font-bold">{value}</p><p className={cn("mt-1 text-[11px] font-medium", tone === "negative" && "text-negative", tone === "positive" && "text-positive", tone === "primary" && "text-primary")}>{note}</p></div>)}
           </section>
 
           <section className="grid min-h-[560px] overflow-hidden rounded-2xl border border-glass-border bg-glass shadow-glass backdrop-blur-xl xl:grid-cols-[minmax(440px,1.15fr)_minmax(360px,.85fr)]">
