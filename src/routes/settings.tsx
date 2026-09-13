@@ -10,10 +10,10 @@ import { teams } from "@/lib/complaints";
 export const Route = createFileRoute("/settings")({
   head: () => ({
     meta: [
-      { title: "Model & routing settings | SupportSense" },
+      { title: "Model & routing settings | CasePilot" },
       { name: "description", content: "Configure the FastAPI classification endpoint and the teams complaints are routed to." },
-      { property: "og:title", content: "Model & routing settings | SupportSense" },
-      { property: "og:description", content: "Point SupportSense at your FastAPI model and manage routing owners." },
+      { property: "og:title", content: "Model & routing settings | CasePilot" },
+      { property: "og:description", content: "Point CasePilot at your FastAPI model and manage routing owners." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -29,7 +29,7 @@ function SettingsPage() {
     <AppShell title="Settings" subtitle="Model connection and complaint routing">
       <section className="rounded-2xl border border-glass-border bg-glass p-5 shadow-glass backdrop-blur-xl">
         <h2 className="font-display text-base font-bold">Model connection</h2>
-        <p className="mt-1 text-xs text-muted-foreground">SupportSense sends each complaint to this endpoint for classification and sentiment.</p>
+        <p className="mt-1 text-xs text-muted-foreground">CasePilot sends each complaint to this endpoint for classification and sentiment.</p>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="endpoint">FastAPI endpoint</Label>

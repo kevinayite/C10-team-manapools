@@ -66,14 +66,14 @@ export function draftResponse(complaint: Complaint): string {
   const firstName = complaint.customer.split(" ")[0];
 
   if (complaint.sentiment === "Positive") {
-    return `Hi ${firstName},\n\nThank you so much for the kind feedback about how your ${complaint.issue.toLowerCase()} was handled. I have shared your note with ${team.owner} and the ${team.name} team.\n\nIf anything else comes up on your account, reply to this message and we will pick it up straight away.\n\nWarm regards,\nSupportSense Customer Care\nReference ${complaint.id}`;
+    return `Hi ${firstName},\n\nThank you so much for the kind feedback about how your ${complaint.issue.toLowerCase()} was handled. I have shared your note with ${team.owner} and the ${team.name} team.\n\nIf anything else comes up on your account, reply to this message and we will pick it up straight away.\n\nWarm regards,\nCasePilot Customer Care\nReference ${complaint.id}`;
   }
 
   const urgency = complaint.priority === "High"
     ? `I have escalated this to ${team.name} as a priority case and you will hear from us within ${Math.min(team.slaHours, 4)} hours.`
     : `I have passed this to ${team.name} and we will come back to you within ${team.slaHours} hours.`;
 
-  return `Hi ${firstName},\n\nThank you for telling us about "${complaint.title.toLowerCase()}". I am sorry for the trouble this has caused, and I can confirm we have logged it as a ${complaint.category.toLowerCase()} issue (${complaint.issue.toLowerCase()}).\n\n${urgency} In the meantime, could you confirm the reference or date of the transaction so we can complete the review faster?\n\nYou can track progress with reference ${complaint.id}.\n\nKind regards,\nSupportSense Customer Care`;
+  return `Hi ${firstName},\n\nThank you for telling us about "${complaint.title.toLowerCase()}". I am sorry for the trouble this has caused, and I can confirm we have logged it as a ${complaint.category.toLowerCase()} issue (${complaint.issue.toLowerCase()}).\n\n${urgency} In the meantime, could you confirm the reference or date of the transaction so we can complete the review faster?\n\nYou can track progress with reference ${complaint.id}.\n\nKind regards,\nCasePilot Customer Care`;
 }
 
 export const insights = [

@@ -23,7 +23,7 @@ function NotificationsMenu() {
       <PopoverContent align="end" className="w-80 border-glass-border bg-glass-strong p-0 backdrop-blur-2xl">
         <div className="border-b border-glass-border px-4 py-3">
           <p className="text-sm font-semibold">New classified complaints</p>
-          <p className="text-[11px] text-muted-foreground">Routed automatically by SupportSense</p>
+          <p className="text-[11px] text-muted-foreground">Routed automatically by CasePilot</p>
         </div>
         <ul className="max-h-72 overflow-y-auto p-2">
           {complaints.slice(0, 4).map((item) => (
@@ -66,7 +66,7 @@ export function AppShell({
           <Link to="/" className="flex items-center gap-3">
             <div className="grid size-10 place-items-center rounded-xl bg-brand-gradient text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25">SS</div>
             <div>
-              <div className="font-display text-[15px] font-bold">SupportSense</div>
+              <div className="font-display text-[15px] font-bold">CasePilot</div>
               <div className="text-[11px] text-muted-foreground">Complaint intelligence</div>
             </div>
           </Link>

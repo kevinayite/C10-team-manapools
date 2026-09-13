@@ -9,7 +9,7 @@ export function ExportButton({ label = "Export" }: { label?: string }) {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = "supportsense-complaints.csv";
+    link.download = "casepilot-complaints.csv";
     link.click();
     URL.revokeObjectURL(url);
     toast.success("Export ready", { description: `${complaints.length} complaints downloaded as CSV.` });

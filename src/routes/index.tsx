@@ -12,9 +12,9 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "SupportSense | Complaint Intelligence" },
+      { title: "CasePilot | Complaint Intelligence" },
       { name: "description", content: "AI-powered complaint classification, customer sentiment analysis, and actionable service insights for financial institutions." },
-      { property: "og:title", content: "SupportSense | Complaint Intelligence" },
+      { property: "og:title", content: "CasePilot | Complaint Intelligence" },
       { property: "og:description", content: "Classify complaints, understand sentiment, and take action from one intelligent operations workspace." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

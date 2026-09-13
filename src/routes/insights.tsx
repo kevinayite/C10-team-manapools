@@ -10,9 +10,9 @@ import { insights, teams } from "@/lib/complaints";
 export const Route = createFileRoute("/insights")({
   head: () => ({
     meta: [
-      { title: "Actionable insights | SupportSense" },
+      { title: "Actionable insights | CasePilot" },
       { name: "description", content: "Emerging complaint patterns with the team that should own them and one-click routing rules." },
-      { property: "og:title", content: "Actionable insights | SupportSense" },
+      { property: "og:title", content: "Actionable insights | CasePilot" },
       { property: "og:description", content: "Emerging complaint patterns, volumes and one-click routing rules." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -25,7 +25,7 @@ function InsightsPage() {
   const [applied, setApplied] = useState<string[]>([]);
 
   return (
-    <AppShell title="Insights" subtitle="Patterns SupportSense found across recent complaints" actions={<ExportButton label="Export insights" />}>
+    <AppShell title="Insights" subtitle="Patterns CasePilot found across recent complaints" actions={<ExportButton label="Export insights" />}>
       <section className="grid gap-3 lg:grid-cols-2">
         {insights.map((insight) => {
           const team = teams.find((item) => item.id === insight.team) ?? teams[0]!;
