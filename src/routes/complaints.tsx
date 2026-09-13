@@ -6,13 +6,13 @@ import { fallbackComplaint } from "@/lib/complaints";
 
 export const Route = createFileRoute("/complaints")({
   validateSearch: (search: Record<string, unknown>) => ({
-    id: typeof search.id === "string" ? search.id : undefined,
+    id: typeof search["id"] === "string" ? search["id"] : undefined,
   }),
   head: () => ({
     meta: [
-      { title: "Complaint queue | SupportSense" },
+      { title: "Complaint queue | CasePilot" },
       { name: "description", content: "Work the live complaint queue with AI classification, sentiment scores, routing and drafted replies." },
-      { property: "og:title", content: "Complaint queue | SupportSense" },
+      { property: "og:title", content: "Complaint queue | CasePilot" },
       { property: "og:description", content: "Triage complaints, review classifications and send drafted replies from one queue." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

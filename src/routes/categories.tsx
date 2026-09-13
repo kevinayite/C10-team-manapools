@@ -8,9 +8,9 @@ import { categoryBreakdown, complaints, teams } from "@/lib/complaints";
 export const Route = createFileRoute("/categories")({
   head: () => ({
     meta: [
-      { title: "Complaint categories | SupportSense" },
+      { title: "Complaint categories | CasePilot" },
       { name: "description", content: "See complaint volume and negative sentiment by category, and which team owns each one." },
-      { property: "og:title", content: "Complaint categories | SupportSense" },
+      { property: "og:title", content: "Complaint categories | CasePilot" },
       { property: "og:description", content: "Category-level complaint volume, sentiment split and team ownership." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
