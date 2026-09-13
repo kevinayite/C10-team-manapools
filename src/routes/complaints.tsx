@@ -6,7 +6,7 @@ import { fallbackComplaint } from "@/lib/complaints";
 
 export const Route = createFileRoute("/complaints")({
   validateSearch: (search: Record<string, unknown>) => ({
-    id: typeof search.id === "string" ? search.id : undefined,
+    id: typeof search["id"] === "string" ? search["id"] : undefined,
   }),
   head: () => ({
     meta: [

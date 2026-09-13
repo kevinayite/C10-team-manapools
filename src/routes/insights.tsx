@@ -58,7 +58,7 @@ function InsightsPage() {
                 >
                   {isApplied ? `Routed to ${team.name}` : "Create routing rule"}
                 </Button>
-                <Button asChild variant="glass" size="sm"><Link to="/complaints">Review complaints</Link></Button>
+                <Button asChild variant="glass" size="sm"><Link to="/complaints" search={{ id: undefined }}>Review complaints</Link></Button>
               </div>
             </article>
           );

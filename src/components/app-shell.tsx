@@ -6,9 +6,9 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { complaints, routeComplaint } from "@/lib/complaints";
 
 const navItems = [
-  { label: "Overview", to: "/", icon: LayoutDashboard },
+  { label: "Overview", to: "/", icon: LayoutDashboard, count: undefined },
   { label: "Complaints", to: "/complaints", icon: Inbox, count: "342" },
-  { label: "Categories", to: "/categories", icon: Tags },
+  { label: "Categories", to: "/categories", icon: Tags, count: undefined },
   { label: "Insights", to: "/insights", icon: Lightbulb, count: "6" },
 ] as const;
 
