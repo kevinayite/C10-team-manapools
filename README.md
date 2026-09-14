@@ -72,7 +72,7 @@ The API provides `POST /api/v1/classify` with `{ "customer": "Name", "text": "co
 
 **Mentors**
 
-- David
+- David Taiwo Balogun
 
 **References**
 
