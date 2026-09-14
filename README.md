@@ -66,12 +66,13 @@ The API provides `POST /api/v1/classify` with `{ "customer": "Name", "text": "co
 
 **Contributors/team members**
 
-- Janet Bello (`Janeworld001`)
 - Moromoke Janet Bello (`moromoke01`)
+- Ayikson Koffi Mawunyo Kevin
+- Palayan Grace Junily
 
 **Mentors**
 
-- Not specified in the supplied project materials. Add the official mentor names before submission if required.
+- David
 
 **References**
 
