@@ -14,6 +14,16 @@ export type Complaint = {
   time: string;
 };
 
+export function categoryForIssue(issue: string): string {
+  const normalized = issue.toLowerCase();
+  if (/(card|credit)/.test(normalized)) return "Credit card";
+  if (/(mortgage|lender|loan|lease|repossession)/.test(normalized)) return "Mortgage";
+  if (/(transfer|payment|transaction|purchase|statement|funds|debit)/.test(normalized)) return "Money transfer";
+  if (/(account|wallet|access|report|disclosure)/.test(normalized)) return "Account access";
+  if (/(fee|interest|charge)/.test(normalized)) return "Fees & charges";
+  return "General support";
+}
+
 export const complaints: Complaint[] = [
   { id: "C-20418", customer: "Ava Richards", initials: "AR", title: "Charged twice for the same wire transfer", body: "I was charged twice for a single international wire transfer. One payment was completed, but the duplicate is still pending after five days. I need this reversed immediately because it has put my account below its minimum balance.", category: "Money transfer", issue: "Duplicate transaction", sentiment: "Negative", confidence: 96, priority: "High", time: "8m" },
   { id: "C-20417", customer: "Marcus Lee", initials: "ML", title: "Card declined while travelling overseas", body: "My card keeps getting declined overseas even though the app shows enough available balance. I informed the bank about my travel before leaving and cannot reach anyone by phone.", category: "Credit card", issue: "Card declined", sentiment: "Negative", confidence: 91, priority: "High", time: "21m" },

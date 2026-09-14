@@ -1,12 +1,14 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Sparkles, TrendingDown, TrendingUp, Zap } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/app-shell";
 import { ComplaintConsole } from "@/components/complaint-console";
+import { ComplaintIntake } from "@/components/complaint-intake";
 import { ExportButton } from "@/components/export-button";
 import { Button } from "@/components/ui/button";
-import { fallbackComplaint, insights, metrics, teams } from "@/lib/complaints";
+import { fallbackComplaint, insights, teams } from "@/lib/complaints";
+import { getStoredComplaints, type StoredComplaint } from "@/lib/model-api";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
@@ -29,13 +31,36 @@ function OverviewPage() {
   const navigate = useNavigate();
   const [selectedId, setSelectedId] = useState(fallbackComplaint.id);
   const [ruleApplied, setRuleApplied] = useState(false);
+  const [storedComplaints, setStoredComplaints] = useState<StoredComplaint[]>([]);
   const topInsight = insights[0]!;
   const insightTeam = teams.find((team) => team.id === topInsight.team) ?? teams[0]!;
+  const today = new Intl.DateTimeFormat("en-GB", { weekday: "long", day: "numeric", month: "long" }).format(new Date());
+  const negativeCount = storedComplaints.filter((complaint) => complaint.sentiment === "Negative").length;
+  const metrics = [
+    { label: "Open complaints", value: String(storedComplaints.length), note: "Live API records", tone: "negative" as const },
+    { label: "Avg. response time", value: storedComplaints.length > 0 ? "Pending" : "-", note: "No response data yet", tone: "positive" as const },
+    { label: "Negative sentiment", value: storedComplaints.length > 0 ? `${Math.round((negativeCount / storedComplaints.length) * 100)}%` : "-", note: "From classified cases", tone: "negative" as const },
+    { label: "Auto-classified", value: storedComplaints.length > 0 ? "100%" : "-", note: `${storedComplaints.length} today`, tone: "primary" as const },
+  ];
+
+  async function loadSummary() {
+    try {
+      setStoredComplaints(await getStoredComplaints());
+    } catch {
+      setStoredComplaints([]);
+    }
+  }
+
+  useEffect(() => {
+    void loadSummary();
+    window.addEventListener("complaint-created", loadSummary);
+    return () => window.removeEventListener("complaint-created", loadSummary);
+  }, []);
 
   return (
     <AppShell
       title="Intelligence overview"
-      subtitle="Friday, 11 September · Live complaint operations"
+      subtitle={`${today} · Live complaint operations`}
       actions={<ExportButton />}
     >
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -53,6 +78,8 @@ function OverviewPage() {
           );
         })}
       </section>
+
+      <ComplaintIntake />
 
       <ComplaintConsole
         selectedId={selectedId}

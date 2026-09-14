@@ -9,7 +9,7 @@ import {
   Sparkles,
   Tags,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -17,6 +17,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Textarea } from "@/components/ui/textarea";
 import {
   complaints,
+  categoryForIssue,
   draftResponse,
   fallbackComplaint,
   recommendedAction,
@@ -24,6 +25,7 @@ import {
   type Complaint,
   type Sentiment,
 } from "@/lib/complaints";
+import { classifyComplaint, getStoredComplaints, type ModelClassification } from "@/lib/model-api";
 import { cn } from "@/lib/utils";
 
 export function SentimentPill({ sentiment }: { sentiment: Sentiment }) {
@@ -49,24 +51,67 @@ export function ComplaintConsole({
   const [draftOpen, setDraftOpen] = useState(false);
   const [draft, setDraft] = useState("");
   const [reviewOpen, setReviewOpen] = useState(false);
+  const [modelResult, setModelResult] = useState<ModelClassification | null>(null);
+  const [modelLoading, setModelLoading] = useState(false);
+  const [storedComplaints, setStoredComplaints] = useState<Complaint[]>([]);
 
-  const selected: Complaint = complaints.find((item) => item.id === selectedId) ?? fallbackComplaint;
+  async function loadStoredComplaints() {
+    try {
+      const rows = await getStoredComplaints();
+      setStoredComplaints(rows.map((row) => ({
+        id: row.id,
+        customer: row.customer,
+        initials: "NC",
+        title: row.title,
+        body: row.body,
+        category: categoryForIssue(row.issue),
+        issue: row.issue,
+        sentiment: row.sentiment,
+        confidence: Math.round(row.issue_confidence * 100),
+        priority: row.priority,
+        time: new Date(row.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      })));
+    } catch {
+      setStoredComplaints([]);
+    }
+  }
+
+  useEffect(() => {
+    void loadStoredComplaints();
+    window.addEventListener("complaint-created", loadStoredComplaints);
+    return () => window.removeEventListener("complaint-created", loadStoredComplaints);
+  }, []);
+
+  const availableComplaints = storedComplaints.length > 0 ? storedComplaints : complaints;
+  const selected: Complaint = availableComplaints.find((item) => item.id === selectedId) ?? availableComplaints[0] ?? fallbackComplaint;
   const team = routeComplaint(selected);
 
   const visible = useMemo(
     () =>
-      complaints.filter(
+      availableComplaints.filter(
         (item) =>
           (filter === "All" || item.sentiment === filter) &&
           (!priorityOnly || item.priority === "High") &&
           `${item.customer} ${item.title} ${item.category}`.toLowerCase().includes(query.toLowerCase()),
       ),
-    [filter, priorityOnly, query],
+    [availableComplaints, filter, priorityOnly, query],
   );
 
   function openDraft() {
     setDraft(draftResponse(selected));
     setDraftOpen(true);
+  }
+
+  async function reviewWithModel() {
+    setModelLoading(true);
+    try {
+      setModelResult(await classifyComplaint(selected.body));
+      setReviewOpen(true);
+    } catch (error) {
+      toast.error("Model API unavailable", { description: error instanceof Error ? error.message : "Start the FastAPI service on port 8000." });
+    } finally {
+      setModelLoading(false);
+    }
   }
 
   return (
@@ -147,10 +192,7 @@ export function ComplaintConsole({
               </div>
               <div className="rounded-xl border border-glass-border bg-glass p-3">
                 <p className="flex items-center gap-1.5 text-[10px] font-semibold uppercase text-muted-foreground"><MessageSquareText className="size-3" />Sentiment</p>
-                <div className="mt-2 flex items-center justify-between"><SentimentPill sentiment={selected.sentiment} /><strong className="text-xs">{selected.confidence}%</strong></div>
-                <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-secondary">
-                  <div className={cn("h-full rounded-full", selected.sentiment === "Negative" ? "bg-negative" : selected.sentiment === "Positive" ? "bg-positive" : "bg-neutral-sentiment")} style={{ width: `${selected.confidence}%` }} />
-                </div>
+                <div className="mt-2"><SentimentPill sentiment={selected.sentiment} /></div>
               </div>
             </div>
 
@@ -171,7 +213,7 @@ export function ComplaintConsole({
 
             <div className="flex items-center justify-between border-t border-glass-border pt-4 text-xs text-muted-foreground">
               <span className="flex items-center gap-1.5"><Clock3 className="size-3.5" />Classified in 184ms</span>
-              <Button variant="ghost" size="sm" onClick={() => setReviewOpen(true)}><CircleHelp className="size-3.5" />Review result</Button>
+              <Button variant="ghost" size="sm" onClick={reviewWithModel} disabled={modelLoading}><CircleHelp className="size-3.5" />{modelLoading ? "Checking model" : "Review with model"}</Button>
             </div>
           </div>
         </div>
@@ -201,9 +243,16 @@ export function ComplaintConsole({
           <DialogHeader>
             <DialogTitle>Review classification</DialogTitle>
             <DialogDescription>
-              {selected.category} · {selected.issue} · {selected.sentiment} at {selected.confidence}% confidence.
+              {modelResult ? `${modelResult.issue} · ${modelResult.sentiment}.` : `${selected.category} · ${selected.issue} · ${selected.sentiment}.`}
             </DialogDescription>
           </DialogHeader>
+          {modelResult && (
+            <div className="grid gap-3 rounded-xl border border-glass-border bg-glass p-4 text-sm sm:grid-cols-3">
+              <div><p className="text-[10px] font-semibold uppercase text-muted-foreground">Issue category</p><p className="mt-1 font-semibold">{modelResult.issue}</p></div>
+              <div><p className="text-[10px] font-semibold uppercase text-muted-foreground">Sentiment</p><p className="mt-1 font-semibold">{modelResult.sentiment}</p></div>
+              <div><p className="text-[10px] font-semibold uppercase text-muted-foreground">Suggested priority</p><p className="mt-1 font-semibold">{modelResult.priority}</p></div>
+            </div>
+          )}
           <div className="flex flex-wrap gap-2">
             <Button size="sm" onClick={() => { setReviewOpen(false); toast.success("Marked as correct", { description: "Feedback stored for model monitoring." }); }}>Looks correct</Button>
             <Button variant="glass" size="sm" onClick={() => { setReviewOpen(false); toast("Flagged for retraining", { description: `${selected.id} added to the review queue.` }); }}>Flag as wrong</Button>
