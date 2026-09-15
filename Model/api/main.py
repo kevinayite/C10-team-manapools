@@ -23,6 +23,7 @@ DATABASE_PATH = DATA_ROOT / "support-sense.db"
 ISSUE_MODEL_DIR = MODEL_ROOT / "distilbert_issue_model" / "distilbert_issue_model"
 LABEL_ENCODER_PATH = MODEL_ROOT / "distilbert_label_encoder.pkl"
 SENTIMENT_MODEL_DIR = MODEL_ROOT / "roberta_sentiment"
+USE_SENTIMENT_MODEL = os.getenv("USE_SENTIMENT_MODEL", "false").strip().lower() in {"1", "true", "yes", "on"}
 
 
 class ClassificationRequest(BaseModel):
@@ -85,6 +86,8 @@ def get_issue_classifier() -> tuple[Any, list[str]]:
 
 @lru_cache(maxsize=1)
 def get_sentiment_classifier() -> Any | None:
+    if not USE_SENTIMENT_MODEL:
+        return None
     if not SENTIMENT_MODEL_DIR.exists():
         return None
     tokenizer = AutoTokenizer.from_pretrained(SENTIMENT_MODEL_DIR)
@@ -215,7 +218,7 @@ app.add_middleware(
 def health() -> ModelStatus:
     return ModelStatus(
         issue_model="loaded" if ISSUE_MODEL_DIR.exists() else "missing",
-        sentiment_model="loaded" if SENTIMENT_MODEL_DIR.exists() else "lexicon-fallback",
+        sentiment_model="loaded" if USE_SENTIMENT_MODEL and SENTIMENT_MODEL_DIR.exists() else "lexicon-fallback",
         issue_labels=len(_load_issue_labels()),
     )
 
