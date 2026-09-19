@@ -69,6 +69,7 @@ The API provides `POST /api/v1/classify` with `{ "customer": "Name", "text": "co
 - Moromoke Janet Bello (`moromoke01`)
 - Ayikson Koffi Mawunyo Kevin
 - Palayan Grace Junily
+- Fatiha Abdullateef
 
 **Mentors**
 
